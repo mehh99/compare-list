@@ -1,4 +1,4 @@
-import CompareLists from '../components/CompareLists';
+import CompareLists from '../components/compareLists';
 
 export default function Home() {
   return (
