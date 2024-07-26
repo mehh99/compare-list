@@ -1,4 +1,3 @@
-// src/components/CompareLists.js
 'use client';
 
 import { useState } from 'react';
@@ -34,6 +33,12 @@ export default function CompareLists() {
     }
   };
 
+  const handleReset = () => {
+    setListA([]);
+    setListB([]);
+    setDifferences({ onlyInListA: [], onlyInListB: [] });
+  };
+
   const containerStyle = {
     display: 'flex',
     flexDirection: 'column',
@@ -64,6 +69,7 @@ export default function CompareLists() {
     fontSize: '1rem',
     lineHeight: '1.5',
     backgroundColor: '#fff',
+    color: '#333',
     boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.1)',
     boxSizing: 'border-box',
   };
@@ -73,16 +79,36 @@ export default function CompareLists() {
     border: 'none',
     borderRadius: '8px',
     backgroundColor: '#0070f3',
-    color: 'white',
+    color: '#ffffff',
     fontSize: '1rem',
     fontWeight: 'bold',
     cursor: 'pointer',
     transition: 'background-color 0.3s, transform 0.2s',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    marginRight: '1rem', // Add margin to separate from reset button
   };
 
   const buttonHoverStyle = {
     backgroundColor: '#005bb5',
+    transform: 'scale(1.05)',
+  };
+
+  const resetButtonStyle = {
+    padding: '0.75rem 2rem',
+    border: 'none',
+    borderRadius: '8px',
+    backgroundColor: '#e0e0e0',
+    color: '#333',
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s, transform 0.2s',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    marginTop: '1rem', // Add margin-top to ensure spacing
+  };
+
+  const resetButtonHoverStyle = {
+    backgroundColor: '#c0c0c0',
     transform: 'scale(1.05)',
   };
 
@@ -106,6 +132,7 @@ export default function CompareLists() {
     padding: '1rem',
     borderBottom: '1px solid #ddd',
     backgroundColor: '#fff',
+    color: '#333',
     borderRadius: '8px',
     marginBottom: '0.5rem',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
@@ -134,14 +161,24 @@ export default function CompareLists() {
           rows="5"
         />
       </header>
-      <button
-        style={buttonStyle}
-        onMouseEnter={(e) => e.target.style.backgroundColor = buttonHoverStyle.backgroundColor}
-        onMouseLeave={(e) => e.target.style.backgroundColor = buttonStyle.backgroundColor}
-        onClick={handleCompare}
-      >
-        Bandingkan Daftar
-      </button>
+      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <button
+          style={buttonStyle}
+          onMouseEnter={(e) => e.target.style.backgroundColor = buttonHoverStyle.backgroundColor}
+          onMouseLeave={(e) => e.target.style.backgroundColor = buttonStyle.backgroundColor}
+          onClick={handleCompare}
+        >
+          Bandingkan Daftar
+        </button>
+        <button
+          style={resetButtonStyle}
+          onMouseEnter={(e) => e.target.style.backgroundColor = resetButtonHoverStyle.backgroundColor}
+          onMouseLeave={(e) => e.target.style.backgroundColor = resetButtonStyle.backgroundColor}
+          onClick={handleReset}
+        >
+          Reset
+        </button>
+      </div>
       <div style={{ marginTop: '2rem' }}>
         <h2 style={h2Style}>Hanya di Daftar A</h2>
         <ul style={ulStyle}>
