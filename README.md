@@ -1,3 +1,12 @@
+# Compare List
+
+## Description
+The Compare List is a JavaScript utility designed to clean and compare lists of items. It removes timestamps and irrelevant data, allowing users to focus on the names or texts that matter.
+
+## Features
+- Cleans strings by removing dates and times.
+- Compares cleaned lists to identify differences.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
