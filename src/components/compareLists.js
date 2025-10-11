@@ -7,22 +7,36 @@ export default function CompareLists() {
   const [listB, setListB] = useState([]);
   const [differences, setDifferences] = useState({ onlyInListA: [], onlyInListB: [] });
 
+  // Fungsi untuk mengekstrak username saja
+  const extractUsernames = (list) => {
+    return list
+      .map(item => {
+        if (!item) return '';
+        // ambil username dari URL Instagram
+        const urlMatch = item.match(/instagram\.com\/_u\/([a-zA-Z0-9._]+)/);
+        if (urlMatch) return urlMatch[1];
+        // ambil kata pertama jika bukan URL
+        return item.split(' ')[0];
+      })
+      .filter(Boolean)
+      .filter(u => !['Followers', 'Following', 'Profiles', 'Profiles you choose to see content from'].includes(u));
+  };
+
   const handleCompare = async () => {
     try {
+      const cleanedListA = extractUsernames(listA);
+      const cleanedListB = extractUsernames(listB);
+
       const response = await fetch('/api/compare', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ listA, listB }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listA: cleanedListA, listB: cleanedListB }),
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      if (!response.ok) throw new Error('Network response was not ok');
 
       const data = await response.json();
-      console.log('API Response:', data);
+
       if (data && Array.isArray(data.onlyInListA) && Array.isArray(data.onlyInListB)) {
         setDifferences(data);
       } else {
@@ -47,15 +61,10 @@ export default function CompareLists() {
     maxWidth: '800px',
     margin: '2rem auto',
     borderRadius: '10px',
-    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
     backgroundColor: '#f9f9f9',
     border: '1px solid #ddd',
     boxSizing: 'border-box',
-  };
-
-  const headerStyle = {
-    textAlign: 'center',
-    marginBottom: '1rem',
   };
 
   const textareaStyle = {
@@ -70,7 +79,7 @@ export default function CompareLists() {
     lineHeight: '1.5',
     backgroundColor: '#fff',
     color: '#333',
-    boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.1)',
+    boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)',
     boxSizing: 'border-box',
   };
 
@@ -79,19 +88,16 @@ export default function CompareLists() {
     border: 'none',
     borderRadius: '8px',
     backgroundColor: '#0070f3',
-    color: '#ffffff',
+    color: '#fff',
     fontSize: '1rem',
     fontWeight: 'bold',
     cursor: 'pointer',
     transition: 'background-color 0.3s, transform 0.2s',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    marginRight: '1rem', // Add margin to separate from reset button
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    marginRight: '1rem',
   };
 
-  const buttonHoverStyle = {
-    backgroundColor: '#005bb5',
-    transform: 'scale(1.05)',
-  };
+  const buttonHoverStyle = { backgroundColor: '#005bb5', transform: 'scale(1.05)' };
 
   const resetButtonStyle = {
     padding: '0.75rem 2rem',
@@ -103,31 +109,14 @@ export default function CompareLists() {
     fontWeight: 'bold',
     cursor: 'pointer',
     transition: 'background-color 0.3s, transform 0.2s',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    marginTop: '1rem', // Add margin-top to ensure spacing
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    marginTop: '1rem',
   };
 
-  const resetButtonHoverStyle = {
-    backgroundColor: '#c0c0c0',
-    transform: 'scale(1.05)',
-  };
+  const resetButtonHoverStyle = { backgroundColor: '#c0c0c0', transform: 'scale(1.05)' };
 
-  const h2Style = {
-    fontSize: '1.5rem',
-    margin: '0.5rem 0',
-    color: '#333',
-    fontWeight: '600',
-  };
-
-  const ulStyle = {
-    listStyle: 'none',
-    padding: '0',
-    margin: '0',
-    width: '100%',
-    maxHeight: '300px',
-    overflowY: 'auto',
-  };
-
+  const h2Style = { fontSize: '1.5rem', margin: '0.5rem 0', color: '#333', fontWeight: '600' };
+  const ulStyle = { listStyle: 'none', padding: '0', margin: '0', width: '100%', maxHeight: '300px', overflowY: 'auto' };
   const liStyle = {
     padding: '1rem',
     borderBottom: '1px solid #ddd',
@@ -135,25 +124,22 @@ export default function CompareLists() {
     color: '#333',
     borderRadius: '8px',
     marginBottom: '0.5rem',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
     transition: 'background-color 0.3s',
   };
-
-  const liHoverStyle = {
-    backgroundColor: '#f1f1f1',
-  };
+  const liHoverStyle = { backgroundColor: '#f1f1f1' };
 
   return (
     <div style={containerStyle}>
-      <header style={headerStyle}>
-        <h2 style={h2Style}>Masukkan Daftar A</h2>
+      <header style={{ textAlign: 'center', marginBottom: '1rem' }}>
+        <h2 style={h2Style}>Masukkan Daftar A (Followers)</h2>
         <textarea
           style={textareaStyle}
           value={listA.join('\n')}
           onChange={(e) => setListA(e.target.value.split('\n'))}
           rows="5"
         />
-        <h2 style={h2Style}>Masukkan Daftar B</h2>
+        <h2 style={h2Style}>Masukkan Daftar B (Following)</h2>
         <textarea
           style={textareaStyle}
           value={listB.join('\n')}
@@ -161,37 +147,50 @@ export default function CompareLists() {
           rows="5"
         />
       </header>
+
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
         <button
           style={buttonStyle}
-          onMouseEnter={(e) => e.target.style.backgroundColor = buttonHoverStyle.backgroundColor}
-          onMouseLeave={(e) => e.target.style.backgroundColor = buttonStyle.backgroundColor}
+          onMouseEnter={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
+          onMouseLeave={(e) => (e.target.style.backgroundColor = buttonStyle.backgroundColor)}
           onClick={handleCompare}
         >
           Bandingkan Daftar
         </button>
         <button
           style={resetButtonStyle}
-          onMouseEnter={(e) => e.target.style.backgroundColor = resetButtonHoverStyle.backgroundColor}
-          onMouseLeave={(e) => e.target.style.backgroundColor = resetButtonStyle.backgroundColor}
+          onMouseEnter={(e) => (e.target.style.backgroundColor = resetButtonHoverStyle.backgroundColor)}
+          onMouseLeave={(e) => (e.target.style.backgroundColor = resetButtonStyle.backgroundColor)}
           onClick={handleReset}
         >
           Reset
         </button>
       </div>
+
       <div style={{ marginTop: '2rem' }}>
         <h2 style={h2Style}>Hanya di Daftar A</h2>
         <ul style={ulStyle}>
           {(differences.onlyInListA || []).map((item, index) => (
-            <li key={index} style={liStyle} onMouseEnter={(e) => e.target.style.backgroundColor = liHoverStyle.backgroundColor} onMouseLeave={(e) => e.target.style.backgroundColor = '#fff'}>
+            <li
+              key={index}
+              style={liStyle}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = liHoverStyle.backgroundColor)}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = '#fff')}
+            >
               {item}
             </li>
           ))}
         </ul>
+
         <h2 style={h2Style}>Hanya di Daftar B</h2>
         <ul style={ulStyle}>
           {(differences.onlyInListB || []).map((item, index) => (
-            <li key={index} style={liStyle} onMouseEnter={(e) => e.target.style.backgroundColor = liHoverStyle.backgroundColor} onMouseLeave={(e) => e.target.style.backgroundColor = '#fff'}>
+            <li
+              key={index}
+              style={liStyle}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = liHoverStyle.backgroundColor)}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = '#fff')}
+            >
               {item}
             </li>
           ))}
